@@ -105,7 +105,7 @@ export default function Document() {
             </div>
           )}
 
-          <button className="mt-10 rounded-full bg-cyan-500 px-8 py-4 font-medium text-slate-950 transition hover:bg-cyan-400 text-lg">
+          <button className="mt-10 rounded-full bg-cyan-500 px-4 py-2 font-medium text-slate-950 transition hover:bg-cyan-400 text-md">
             Generate documents
           </button>
         </div>
