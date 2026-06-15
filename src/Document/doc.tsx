@@ -104,6 +104,10 @@ export default function Document() {
               No files selected yet.
             </div>
           )}
+
+          <button className="mt-10 rounded-full bg-cyan-500 px-8 py-4 font-medium text-slate-950 transition hover:bg-cyan-400 text-lg">
+            Generate documents
+          </button>
         </div>
       </main>
     </div>
