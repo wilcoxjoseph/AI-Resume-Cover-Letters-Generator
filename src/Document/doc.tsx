@@ -5,6 +5,10 @@ export default function Document() {
   const navigate = useNavigate();
   const [files, setFiles] = useState<File[]>([]);
 
+  const [jobTitle, setJobTitle] = useState("");
+  const [jobDescription, setJobDescription] = useState("");
+  const [additionalInfo, setAdditionalInfo] = useState("");
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
     setFiles(Array.from(event.target.files));
@@ -38,6 +42,48 @@ export default function Document() {
               className="mx-auto mt-4 block w-full cursor-pointer rounded-xl border border-slate-700 bg-slate-900/90 px-4 py-3 text-sm text-slate-100 outline-none transition hover:border-cyan-500"
             />
           </label>
+
+          <div className="mt-8 rounded-3xl border border-slate-800 bg-slate-950/80 p-6">
+            <h2 className="text-xl font-semibold text-white">Job details</h2>
+            <p className="mt-2 text-sm text-slate-400">
+              Tell us the job title, description, and any additional details that will help tailor your resume and cover letter.
+            </p>
+
+            <div className="mt-6 grid gap-6">
+              <label className="grid gap-2 text-sm text-slate-200">
+                <span className="font-medium">Job title</span>
+                <input
+                  type="text"
+                  value={jobTitle}
+                  onChange={(event) => setJobTitle(event.target.value)}
+                  placeholder="e.g. Product Manager, Software Engineer"
+                  className="w-full rounded-2xl border border-slate-700 bg-slate-900/90 px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20"
+                />
+              </label>
+
+              <label className="grid gap-2 text-sm text-slate-200">
+                <span className="font-medium">Job description</span>
+                <textarea
+                  value={jobDescription}
+                  onChange={(event) => setJobDescription(event.target.value)}
+                  placeholder="Paste the job posting or describe the role here"
+                  rows={4}
+                  className="w-full rounded-2xl border border-slate-700 bg-slate-900/90 px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20"
+                />
+              </label>
+
+              <label className="grid gap-2 text-sm text-slate-200">
+                <span className="font-medium">Additional information</span>
+                <textarea
+                  value={additionalInfo}
+                  onChange={(event) => setAdditionalInfo(event.target.value)}
+                  placeholder="Share any preferences, accomplishments, or company specifics to include"
+                  rows={4}
+                  className="w-full rounded-2xl border border-slate-700 bg-slate-900/90 px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20"
+                />
+              </label>
+            </div>
+          </div>
 
           {files.length > 0 ? (
             <div className="mt-8 rounded-3xl bg-slate-950/80 p-6">
