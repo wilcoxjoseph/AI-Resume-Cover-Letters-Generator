@@ -8,11 +8,39 @@ export default function Document() {
   const [jobTitle, setJobTitle] = useState("");
   const [jobDescription, setJobDescription] = useState("");
   const [additionalInfo, setAdditionalInfo] = useState("");
+  const [result, setResult] = useState("");
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
     setFiles(Array.from(event.target.files));
   };
+
+  const handleGenerate = async () => {
+    try {
+      const response = await fetch("/api/document", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          jobTitle,
+          jobDescription,
+          additionalInfo
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate documents");
+      }
+
+      const data = await response.json();
+      setResult(data.result);
+
+    } catch (error) {
+      console.error("Error generating documents:", error);
+    };
+  };
+
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
@@ -105,9 +133,15 @@ export default function Document() {
             </div>
           )}
 
-          <button className="mt-10 rounded-full bg-cyan-500 px-4 py-2 font-medium text-slate-950 transition hover:bg-cyan-400 text-md">
+          <button onClick={handleGenerate} className="mt-10 rounded-full bg-cyan-500 px-4 py-2 font-medium text-slate-950 transition hover:bg-cyan-400 text-md">
             Generate documents
           </button>
+          {result && (
+            <div className="mt-8 rounded-3xl bg-slate-950/80 p-6">
+              <h2 className="text-xl font-semibold text-white">Generated Documents</h2>
+              <pre className="mt-4 text-slate-200">{result}</pre>
+            </div>
+          )}
         </div>
       </main>
     </div>
