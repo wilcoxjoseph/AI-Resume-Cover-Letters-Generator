@@ -9,15 +9,20 @@ export default function Document() {
   const [jobDescription, setJobDescription] = useState("");
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [result, setResult] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
     setFiles(Array.from(event.target.files));
   };
 
-  const handleGenerate = async () => {
-    try {
-      const response = await fetch("/api/document", {
+const handleGenerate = async () => {
+  try {
+    setLoading(true);
+
+    const response = await fetch(
+      "http://localhost:3001/generate",
+      {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -25,21 +30,20 @@ export default function Document() {
         body: JSON.stringify({
           jobTitle,
           jobDescription,
-          additionalInfo
+          additionalInfo,
         }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to generate documents");
       }
+    );
 
-      const data = await response.json();
-      setResult(data.result);
+    const data = await response.json();
 
-    } catch (error) {
-      console.error("Error generating documents:", error);
-    };
-  };
+    setResult(data.result);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+};
 
 
   return (
@@ -133,8 +137,10 @@ export default function Document() {
             </div>
           )}
 
-          <button onClick={handleGenerate} className="mt-10 rounded-full bg-cyan-500 px-4 py-2 font-medium text-slate-950 transition hover:bg-cyan-400 text-md">
-            Generate documents
+          <button onClick={handleGenerate} 
+          disabled={loading}
+          className="mt-10 rounded-full bg-cyan-500 px-4 py-2 font-medium text-slate-950 transition hover:bg-cyan-400 text-md">
+            {loading ? "Generating..." : "Generate documents"}
           </button>
           {result && (
             <div className="mt-8 rounded-3xl bg-slate-950/80 p-6">

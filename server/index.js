@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import OpenAI from "openai";
+import Groq from "groq-sdk";
 
 dotenv.config();
 
@@ -10,8 +10,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
 });
 
 app.post("/generate", async (req, res) => {
@@ -23,8 +23,8 @@ app.post("/generate", async (req, res) => {
     } = req.body;
 
     const completion =
-      await openai.chat.completions.create({
-        model: "gpt-4.1-mini",
+      await groq.chat.completions.create({
+        model: "llama-3.3-70b-versatile",
         messages: [
           {
             role: "system",
@@ -61,6 +61,10 @@ Generate:
       error: "Failed to generate",
     });
   }
+});
+
+app.get("/", (req, res) => {
+  res.send("AI Resume API is running");
 });
 
 app.listen(3001, () => {
