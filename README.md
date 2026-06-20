@@ -69,6 +69,3 @@ As a recent Software Engineering graduate, I wanted to build a practical AI appl
 ## Author
 
 Joseph Wilcox
-
-* LinkedIn: linkedin.com/in/joseph-wilcox-8214062a4
-* GitHub: github.com/wilcoxjoseph
