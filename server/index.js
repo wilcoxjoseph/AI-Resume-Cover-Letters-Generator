@@ -101,6 +101,36 @@ Generate:
   }
 });
 
+const fromData = FormData();
+
+fromData.append(
+  "resume",
+  files[0]
+);
+
+fromData.append(
+  "jobTitle",
+  jobTitle
+);
+
+fromData.append(
+  "jobDescription",
+  jobDescription
+);
+
+fromData.append(
+  "additionalInfo",
+  additionalInfo
+);
+
+const response = await fetch(
+  "http://localhost:3001/generate",
+  {
+    method: "POST",
+    body: fromData,
+  }
+);
+
 app.get("/", (req, res) => {
   res.send("AI Resume API is running");
 });
