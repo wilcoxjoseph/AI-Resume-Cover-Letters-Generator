@@ -37,6 +37,10 @@ const handleGenerate = async () => {
 
     const data = await response.json();
 
+    if (!response.ok) {
+      throw new Error("Failed to generate document");
+    }
+
     setResult(data.result);
   } catch (error) {
     console.error(error);
