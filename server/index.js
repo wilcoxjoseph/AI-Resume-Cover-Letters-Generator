@@ -2,8 +2,15 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import Groq from "groq-sdk";
+import multer from "multer";
+import pdf from "pdf-parse";
+import mammoth from "mammoth";
 
 dotenv.config();
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+});
 
 const app = express();
 
@@ -14,7 +21,33 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
-app.post("/generate", async (req, res) => {
+const resumeText = await extractText(
+  req.file
+);
+
+async function extractText(file) {
+  if (file.mimetype == "application/pdf") {
+    const data = await pdf(file.buffer);
+    return data.text;
+  }
+
+  if (
+    file.mimetype ===
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  ) {
+    const result = await mammoth.extractRawText({
+      buffer: file.buffer,
+    });
+
+    return result.value;
+  }
+  
+  throw new Error("Unsupported file type");
+}
+
+
+
+app.post("/generate", upload.single("resume"), async (req, res) => {
   try {
     const {
       jobTitle,
@@ -29,11 +62,14 @@ app.post("/generate", async (req, res) => {
           {
             role: "system",
             content:
-              "You are an expert resume writer.",
+              "You are an expert resume writer and ATS specialist.",
           },
           {
             role: "user",
             content: `
+Resume:
+${resumeText}
+
 Job Title:
 ${jobTitle}
 
@@ -44,8 +80,10 @@ Additional Info:
 ${additionalInfo}
 
 Generate:
-1. Resume Summary
-2. Cover Letter
+1. ATS Score
+2. Missing Keywords
+3. Improve Resume Summary
+4. Professional Cover Letter
 `,
           },
         ],
