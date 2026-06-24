@@ -20,30 +20,29 @@ const handleGenerate = async () => {
   try {
     setLoading(true);
 
-    const response = await fetch(
-      "http://localhost:3001/generate",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          jobTitle,
-          jobDescription,
-          additionalInfo,
-        }),
-      }
-    );
+    const formData = new FormData();
+    if (files.length > 0) {
+      formData.append("resume", files[0]);
+    }
+    formData.append("jobTitle", jobTitle);
+    formData.append("jobDescription", jobDescription);
+    formData.append("additionalInfo", additionalInfo);
+
+    const response = await fetch("http://localhost:3001/generate", {
+      method: "POST",
+      body: formData,
+    });
 
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error("Failed to generate document");
+      throw new Error(data?.error || "Failed to generate document");
     }
 
     setResult(data.result);
   } catch (error) {
     console.error(error);
+    alert("Failed to generate documents. See console for details.");
   } finally {
     setLoading(false);
   }

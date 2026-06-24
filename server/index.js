@@ -3,7 +3,9 @@ import cors from "cors";
 import dotenv from "dotenv";
 import Groq from "groq-sdk";
 import multer from "multer";
-import pdf from "pdf-parse";
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const pdf = require("pdf-parse");
 import mammoth from "mammoth";
 
 dotenv.config();
@@ -20,10 +22,6 @@ app.use(express.json());
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
-
-const resumeText = await extractText(
-  req.file
-);
 
 async function extractText(file) {
   if (file.mimetype == "application/pdf") {
@@ -49,6 +47,8 @@ async function extractText(file) {
 
 app.post("/generate", upload.single("resume"), async (req, res) => {
   try {
+const resumeText = await extractText(req.file);
+
     const {
       jobTitle,
       jobDescription,
@@ -101,35 +101,7 @@ Generate:
   }
 });
 
-const fromData = FormData();
-
-fromData.append(
-  "resume",
-  files[0]
-);
-
-fromData.append(
-  "jobTitle",
-  jobTitle
-);
-
-fromData.append(
-  "jobDescription",
-  jobDescription
-);
-
-fromData.append(
-  "additionalInfo",
-  additionalInfo
-);
-
-const response = await fetch(
-  "http://localhost:3001/generate",
-  {
-    method: "POST",
-    body: fromData,
-  }
-);
+// Removed stray client-side FormData/fetch block that caused runtime errors.
 
 app.get("/", (req, res) => {
   res.send("AI Resume API is running");
