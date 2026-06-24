@@ -5,7 +5,7 @@ import Groq from "groq-sdk";
 import multer from "multer";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
-const pdf = require("pdf-parse");
+const { PDFParse } = require("pdf-parse");
 import mammoth from "mammoth";
 
 dotenv.config();
@@ -24,8 +24,14 @@ const groq = new Groq({
 });
 
 async function extractText(file) {
-  if (file.mimetype == "application/pdf") {
-    const data = await pdf(file.buffer);
+  if (!file) {
+    throw new Error("No resume file uploaded");
+  }
+
+  if (file.mimetype === "application/pdf") {
+    const parser = new PDFParse({ data: file.buffer });
+    const data = await parser.getText();
+    await parser.destroy();
     return data.text;
   }
 
