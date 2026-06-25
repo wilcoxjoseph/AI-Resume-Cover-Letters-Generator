@@ -148,7 +148,7 @@ const handleGenerate = async () => {
           {result && (
             <div className="mt-8 rounded-3xl bg-slate-950/80 p-6">
               <h2 className="text-xl font-semibold text-white">Generated Documents</h2>
-              <pre className="mt-4 text-slate-200">{result}</pre>
+              <pre className="whitespace-pre-wrap break-words text-white">{result}</pre>
             </div>
           )}
         </div>
