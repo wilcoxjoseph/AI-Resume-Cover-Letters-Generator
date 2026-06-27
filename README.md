@@ -65,7 +65,7 @@ node index.js
 
 ## Resume Upload
 
-![Resume Upload](screenshots/Upload-File-Page.png)
+![Upload File Page](screenshots/Upload-File-Page.png)
 
 ## Job Description
 
