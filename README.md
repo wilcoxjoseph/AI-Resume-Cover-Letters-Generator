@@ -63,6 +63,22 @@ node index.js
 ## Home Page
 ![Home Page](Screenshots/HomePage.png)
 
+## Resume Upload
+
+![Resume Upload](screenshots/Upload-File-Page.png)
+
+## Job Description
+
+![Job Description](screenshots/Job-Description-Details.png)
+
+## Generated Documents 1
+
+![Generated Documents 1](screenshots/Generated-Doc-1.png)
+
+## Generated Documents 2
+
+![Generated Documents 2](screenshots/Generated-Doc-2.png)
+
 
 ## Motivation
 
