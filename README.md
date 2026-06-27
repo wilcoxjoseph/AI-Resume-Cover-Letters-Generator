@@ -35,8 +35,6 @@ An AI-powered web application that helps job seekers create tailored resumes and
 
 ## Future Improvements
 
-* Resume PDF/DOCX upload and parsing
-* PDF and DOCX export
 * User authentication
 * Document storage and management
 * Application history tracking
@@ -61,6 +59,10 @@ npm run dev
 # Start backend
 node index.js
 ```
+
+## Home Page
+![Home Page](Screenshots/HomePage.png)
+
 
 ## Motivation
 
