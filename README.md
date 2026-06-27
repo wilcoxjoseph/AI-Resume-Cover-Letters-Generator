@@ -65,19 +65,19 @@ node index.js
 
 ## Resume Upload
 
-![Upload File Page](screenshots/Upload-File-Page.png)
+![Upload File Page](Screenshots/Upload-File-Page.png)
 
 ## Job Description
 
-![Job Description](screenshots/Job-Description-Details.png)
+![Job Description](Screenshots/Job-Description-Details.png)
 
 ## Generated Documents 1
 
-![Generated Documents 1](screenshots/Generated-Doc-1.png)
+![Generated Documents 1](Screenshots/Generated-Doc-1.png)
 
 ## Generated Documents 2
 
-![Generated Documents 2](screenshots/Generated-Doc-2.png)
+![Generated Documents 2](Screenshots/Generated-Doc-2.png)
 
 
 ## Motivation
