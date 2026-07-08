@@ -7,6 +7,16 @@ import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const { PDFParse } = require("pdf-parse");
 import mammoth from "mammoth";
+import rateLimit from "express-rate-limit";
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20, // limit each IP to 20 requests per windowMs
+});
+
+app.post("/generate", limiter, upload.single("resume"), async (req, res) => {
+  // ... rest of the code
+});
 
 dotenv.config();
 
@@ -16,7 +26,9 @@ const upload = multer({
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: "https://ai-resume-cover-letters-generator.vercel.app/",
+}));
 app.use(express.json());
 
 const groq = new Groq({
