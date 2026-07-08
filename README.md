@@ -2,7 +2,7 @@
 
 An AI-powered web application that helps job seekers create tailored resumes and cover letters based on specific job descriptions. The application leverages large language models to generate professional, customized content that aligns with a user's skills and career goals.
 
-Live Demo:
+Live Demo: https://github.com/user-attachments/assets/acbb81f0-579b-433a-9255-c500b8b01b93
 
 ## Features
 
