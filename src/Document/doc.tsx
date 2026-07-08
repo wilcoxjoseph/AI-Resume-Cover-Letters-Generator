@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 export default function Document() {
   const navigate = useNavigate();
   const [files, setFiles] = useState<File[]>([]);
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
   const [jobTitle, setJobTitle] = useState("");
   const [jobDescription, setJobDescription] = useState("");
@@ -28,7 +29,7 @@ const handleGenerate = async () => {
     formData.append("jobDescription", jobDescription);
     formData.append("additionalInfo", additionalInfo);
 
-    const response = await fetch("http://localhost:3001/generate", {
+    const response = await fetch(`${API_URL}/generate`, {
       method: "POST",
       body: formData,
     });
