@@ -23,6 +23,8 @@ const upload = multer({
 
 const app = express();
 
+app.set("trust proxy", 1); // trust first proxy
+
 app.use(cors({
   origin: "https://ai-resume-cover-letters-generator.vercel.app/",
 }));
