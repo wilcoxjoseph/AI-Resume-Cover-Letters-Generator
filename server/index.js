@@ -14,10 +14,6 @@ const limiter = rateLimit({
   max: 20, // limit each IP to 20 requests per windowMs
 });
 
-app.post("/generate", limiter, upload.single("resume"), async (req, res) => {
-  // ... rest of the code
-});
-
 dotenv.config();
 
 const upload = multer({
@@ -64,7 +60,7 @@ async function extractText(file) {
 
 
 
-app.post("/generate", upload.single("resume"), async (req, res) => {
+app.post("/generate", limiter, upload.single("resume"), async (req, res) => {
   try {
 const resumeText = await extractText(req.file);
 
