@@ -26,7 +26,17 @@ const app = express();
 app.set("trust proxy", 1); // trust first proxy
 
 app.use(cors({
-  origin: "https://ai-resume-cover-letters-generator.vercel.app",
+  origin: (origin, callback) => {
+    if (
+      !origin ||
+      origin === "https://ai-resume-cover-letters-generator.vercel.app" ||
+      /^https:\/\/ai-resume-cover-letters-generator-.*\.vercel\.app$/.test(origin)
+    ) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  }
 }));
 app.use(express.json());
 
