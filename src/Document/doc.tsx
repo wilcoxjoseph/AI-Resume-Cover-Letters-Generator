@@ -1,6 +1,43 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+type MissingKeyword = {
+  keyword: string;
+  found_in_resume: boolean;
+  suggestion: string;
+};
+
+type Result = {
+  atsScore: number;
+  matchedKeywords: string[];
+  missingKeywords: MissingKeyword[];
+  summary: string;
+  coverLetter: string;
+};
+
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      console.error("Copy failed", error);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleCopy}
+      className="rounded-full border border-slate-700 px-4 py-1.5 text-sm font-medium text-slate-200 transition hover:border-cyan-500 hover:text-cyan-400"
+    >
+      {copied ? "Copied!" : "Copy"}
+    </button>
+  );
+}
+
 export default function Document() {
   const navigate = useNavigate();
   const [files, setFiles] = useState<File[]>([]);
@@ -9,7 +46,7 @@ export default function Document() {
   const [jobTitle, setJobTitle] = useState("");
   const [jobDescription, setJobDescription] = useState("");
   const [additionalInfo, setAdditionalInfo] = useState("");
-  const [result, setResult] = useState("");
+  const [result, setResult] = useState<Result | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -17,38 +54,41 @@ export default function Document() {
     setFiles(Array.from(event.target.files));
   };
 
-const handleGenerate = async () => {
-  try {
-    setLoading(true);
+  const handleGenerate = async () => {
+    try {
+      setLoading(true);
+      setResult(null);
 
-    const formData = new FormData();
-    if (files.length > 0) {
-      formData.append("resume", files[0]);
+      const formData = new FormData();
+      if (files.length > 0) {
+        formData.append("resume", files[0]);
+      }
+      formData.append("jobTitle", jobTitle);
+      formData.append("jobDescription", jobDescription);
+      formData.append("additionalInfo", additionalInfo);
+
+      const response = await fetch(`${API_URL}/generate`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.error || "Failed to generate document");
+      }
+
+      setResult(data);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to generate documents. See console for details.");
+    } finally {
+      setLoading(false);
     }
-    formData.append("jobTitle", jobTitle);
-    formData.append("jobDescription", jobDescription);
-    formData.append("additionalInfo", additionalInfo);
+  };
 
-    const response = await fetch(`${API_URL}/generate`, {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data?.error || "Failed to generate document");
-    }
-
-    setResult(data.result);
-  } catch (error) {
-    console.error(error);
-    alert("Failed to generate documents. See console for details.");
-  } finally {
-    setLoading(false);
-  }
-};
-
+  const scoreColor = (score: number) =>
+    score >= 75 ? "text-emerald-400" : score >= 50 ? "text-amber-400" : "text-rose-400";
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
@@ -73,7 +113,6 @@ const handleGenerate = async () => {
             <input
               type="file"
               accept=".pdf,.docx"
-              multiple
               onChange={handleFileChange}
               className="mx-auto mt-4 block w-full cursor-pointer rounded-xl border border-slate-700 bg-slate-900/90 px-4 py-3 text-sm text-slate-100 outline-none transition hover:border-cyan-500"
             />
@@ -123,7 +162,7 @@ const handleGenerate = async () => {
 
           {files.length > 0 ? (
             <div className="mt-8 rounded-3xl bg-slate-950/80 p-6">
-              <h2 className="text-xl font-semibold text-white">Selected files</h2>
+              <h2 className="text-xl font-semibold text-white">Selected file</h2>
               <ul className="mt-4 space-y-2 text-slate-200">
                 {files.map((file) => (
                   <li key={file.name} className="rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-3">
@@ -141,15 +180,85 @@ const handleGenerate = async () => {
             </div>
           )}
 
-          <button onClick={handleGenerate} 
-          disabled={loading}
-          className="mt-10 rounded-full bg-cyan-500 px-4 py-2 font-medium text-slate-950 transition hover:bg-cyan-400 text-md">
+          <button
+            onClick={handleGenerate}
+            disabled={loading}
+            className="mt-10 rounded-full bg-cyan-500 px-4 py-2 font-medium text-slate-950 transition hover:bg-cyan-400 disabled:opacity-60 text-md"
+          >
             {loading ? "Generating..." : "Generate documents"}
           </button>
+
           {result && (
-            <div className="mt-8 rounded-3xl bg-slate-950/80 p-6">
-              <h2 className="text-xl font-semibold text-white">Generated Documents</h2>
-              <pre className="whitespace-pre-wrap break-words text-white">{result}</pre>
+            <div className="mt-8 grid gap-6">
+              {/* Keyword match */}
+              <section className="rounded-3xl bg-slate-950/80 p-6">
+                <div className="flex items-baseline justify-between gap-4">
+                  <h2 className="text-xl font-semibold text-white">Keyword match</h2>
+                  <span className={`text-4xl font-semibold ${scoreColor(result.atsScore)}`}>
+                    {result.atsScore}%
+                  </span>
+                </div>
+                <p className="mt-1 text-sm text-slate-400">
+                  Share of the job's key requirements that appear in your resume.
+                </p>
+
+                {result.matchedKeywords.length > 0 && (
+                  <div className="mt-5">
+                    <h3 className="text-sm font-medium uppercase tracking-wider text-emerald-400">
+                      Found in your resume
+                    </h3>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {result.matchedKeywords.map((kw) => (
+                        <span
+                          key={kw}
+                          className="rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 text-sm text-emerald-300"
+                        >
+                          {kw}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {result.missingKeywords.length > 0 && (
+                  <div className="mt-6">
+                    <h3 className="text-sm font-medium uppercase tracking-wider text-amber-400">
+                      Missing
+                    </h3>
+                    <ul className="mt-2 space-y-2">
+                      {result.missingKeywords.map((kw) => (
+                        <li
+                          key={kw.keyword}
+                          className="rounded-2xl border border-slate-800 bg-slate-900/70 px-4 py-3"
+                        >
+                          <span className="font-medium text-amber-300">{kw.keyword}</span>
+                          {kw.suggestion && (
+                            <p className="mt-1 text-sm text-slate-300">{kw.suggestion}</p>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </section>
+
+              {/* Summary */}
+              <section className="rounded-3xl bg-slate-950/80 p-6">
+                <div className="flex items-center justify-between gap-4">
+                  <h2 className="text-xl font-semibold text-white">Suggested resume summary</h2>
+                  <CopyButton text={result.summary} />
+                </div>
+                <p className="mt-4 whitespace-pre-wrap leading-7 text-slate-200">{result.summary}</p>
+              </section>
+
+              {/* Cover letter */}
+              <section className="rounded-3xl bg-slate-950/80 p-6">
+                <div className="flex items-center justify-between gap-4">
+                  <h2 className="text-xl font-semibold text-white">Cover letter</h2>
+                  <CopyButton text={result.coverLetter} />
+                </div>
+                <p className="mt-4 whitespace-pre-wrap leading-7 text-slate-200">{result.coverLetter}</p>
+              </section>
             </div>
           )}
         </div>
