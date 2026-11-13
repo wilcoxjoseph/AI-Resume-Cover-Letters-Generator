@@ -48,6 +48,7 @@ export default function Document() {
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [result, setResult] = useState<Result | null>(null);
   const [loading, setLoading] = useState(false);
+  const [coverLetter, setCoverLetter] = useState("");
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
@@ -79,6 +80,7 @@ export default function Document() {
       }
 
       setResult(data);
+      setCoverLetter(data.coverLetter);
     } catch (error) {
       console.error(error);
       alert("Failed to generate documents. See console for details.");
@@ -89,6 +91,20 @@ export default function Document() {
 
   const scoreColor = (score: number) =>
     score >= 75 ? "text-emerald-400" : score >= 50 ? "text-amber-400" : "text-rose-400";
+
+  const fileBase = `Cover_letter_${jobTitle.trim().replace(/[^a-z0-9]+/gi, "_") || "Draft"}`;
+
+  const handleDownload = async (type: "pdf" | "docx") => {
+    try {
+      // Loaded on demand so these libraries don't bloat your initial bundle
+      const {downloadPdf, downloadDocx} = await import("../utils/downloads");
+      if (type === "pdf") downloadDocx(coverLetter, fileBase);
+      else await downloadDocx(coverLetter, fileBase);
+    } catch (error) {
+      console.error(error);
+      alert("Download failed. See console for details.");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
@@ -253,11 +269,33 @@ export default function Document() {
 
               {/* Cover letter */}
               <section className="rounded-3xl bg-slate-950/80 p-6">
-                <div className="flex items-center justify-between gap-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
                   <h2 className="text-xl font-semibold text-white">Cover letter</h2>
-                  <CopyButton text={result.coverLetter} />
+                  <div className="flex gap-2">
+                    <CopyButton text={coverLetter} />
+                    <button
+                      onClick={() => handleDownload("pdf")}
+                      className="rounded-full border border-slate-700 px-4 py-1.5 text-sm font-medium text-slate-200 transition hover:border-cyan-500 hover:text-cyan-400"
+                    >
+                      PDF
+                    </button>
+                    <button
+                      onClick={() => handleDownload("docx")}
+                      className="rounded-full border border-slate-700 px-4 py-1.5 text-sm font-medium text-slate-200 transition hover:border-cyan-500 hover:text-cyan-400"
+                    >
+                      DOCX
+                    </button>
+                  </div>
                 </div>
-                <p className="mt-4 whitespace-pre-wrap leading-7 text-slate-200">{result.coverLetter}</p>
+                <p className="mt-2 text-sm text-slate-400">
+                  Edit the text below before downloading.
+                </p>
+                <textarea
+                  value={coverLetter}
+                  onChange={(e) => setCoverLetter(e.target.value)}
+                  rows={16}
+                  className="mt-4 w-full rounded-2xl border border-slate-700 bg-slate-900/90 px-4 py-3 text-sm leading-7 text-slate-100 outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20"
+                />
               </section>
             </div>
           )}
