@@ -267,7 +267,7 @@ export default function Document() {
                 <p className="mt-4 whitespace-pre-wrap leading-7 text-slate-200">{result.summary}</p>
               </section>
 
-              {/* Cover letter */}
+            {/* Cover letter */}
               <section className="rounded-3xl bg-slate-950/80 p-6">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <h2 className="text-xl font-semibold text-white">Cover letter</h2>
