@@ -274,7 +274,7 @@ export default function Document() {
                   <div className="flex gap-2">
                     <CopyButton text={coverLetter} />
                     <button
-                      onClick={() => handleDownload("pdf")}
+                      onClick= {() => handleDownload("pdf")}
                       className="rounded-full border border-slate-700 px-4 py-1.5 text-sm font-medium text-slate-200 transition hover:border-cyan-500 hover:text-cyan-400"
                     >
                       PDF
