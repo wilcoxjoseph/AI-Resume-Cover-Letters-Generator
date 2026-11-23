@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { buildLetter, formatContactLine, stripFraming } from "../utils/letter";
 
 type MissingKeyword = {
   keyword: string;
@@ -50,6 +51,10 @@ export default function Document() {
   const [loading, setLoading] = useState(false);
   const [coverLetter, setCoverLetter] = useState("");
 
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
     setFiles(Array.from(event.target.files));
@@ -80,7 +85,7 @@ export default function Document() {
       }
 
       setResult(data);
-      setCoverLetter(data.coverLetter);
+      setCoverLetter(stripFraming(data.coverLetter));
     } catch (error) {
       console.error(error);
       alert("Failed to generate documents. See console for details.");
