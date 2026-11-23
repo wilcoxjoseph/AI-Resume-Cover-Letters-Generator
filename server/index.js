@@ -78,7 +78,7 @@ Strict rules:
 - If the job requires a skill the resume does not show, mark it as not found in keywords. Never claim it in the summary or cover letter.
 - Do not include any number in the summary or cover letter unless it appears in the resume.
 - If the candidate has no professional experience, do not imply they do. Emphasize projects, education, and coursework instead.
-- Cover letter: first person, 250-350 words, plain paragraphs, no bullet points, no markdown, no placeholders.
+- Cover letter: first person, 250-350 words, plain paragraphs, no bullet points, no markdown, no placeholders. Write ONLY the body paragraphs: no salutation, no sign-off, no name, no contact details, no date.
 - Return only JSON matching the schema.`;
 
 const schema = {
