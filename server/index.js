@@ -78,7 +78,9 @@ Strict rules:
 - If the job requires a skill the resume does not show, mark it as not found in keywords. Never claim it in the summary or cover letter.
 - Do not include any number in the summary or cover letter unless it appears in the resume.
 - If the candidate has no professional experience, do not imply they do. Emphasize projects, education, and coursework instead.
-- Cover letter: first person, 250-350 words, plain paragraphs, no bullet points, no markdown, no placeholders. Write ONLY the body paragraphs: no salutation, no sign-off, no name, no contact details, no date.
+- Cover letter: first person, 250-350 words, written as 3 to 4 short paragraphs separated by a blank line. No bullet points, no markdown, no placeholders. Write ONLY the body paragraphs: no salutation, no sign-off, no name, no contact details, no date.
+- Use regular hyphens (-), never non-breaking hyphens or special spaces.
+- Use today's date to get tense right. Anything dated before today has already happened (a graduation in May 2026 is "graduated", not "will graduate").
 - Return only JSON matching the schema.`;
 
 const schema = {
@@ -105,7 +107,10 @@ const schema = {
       },
     },
     summary: { type: "string" },
-    cover_letter: { type: "string" },
+    cover_letter: { 
+      type: "string",
+      description: "Body paragraphs only, separated by a blank line (\\n\\n).",
+    },
   },
   required: ["candidate_name", "keywords", "summary", "cover_letter"],
   additionalProperties: false,
