@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { buildLetter, formatContactLine, stripFraming } from "../utils/letter";
+import { buildLetter, formatContactLine, normalizeText, stripFraming } from "../utils/letter";
 
 type MissingKeyword = {
   keyword: string;
@@ -84,8 +84,8 @@ export default function Document() {
         throw new Error(data?.error || "Failed to generate document");
       }
 
-      setResult(data);
-      setCoverLetter(stripFraming(data.coverLetter));
+      setResult({ ...data, summary: normalizeText(data.summary) });
+      setCoverLetter(normalizeText(stripFraming(data.coverLetter)));
     } catch (error) {
       console.error(error);
       alert("Failed to generate documents. See console for details.");
